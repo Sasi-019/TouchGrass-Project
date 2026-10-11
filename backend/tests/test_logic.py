@@ -48,8 +48,10 @@ def test_production_requires_real_cors_and_long_secret():
 
 
 def test_postgres_scheme_is_normalised():
-    assert normalize_database_url("postgres://a/b").startswith("postgresql://")
-
+        assert normalize_database_url("postgres://u:p@h:5432/db") == "postgresql+psycopg2://u:p@h:5432/db"
+        assert normalize_database_url("postgresql://u:p@h:5432/db") == "postgresql+psycopg2://u:p@h:5432/db"
+        assert normalize_database_url("postgresql+psycopg://u:p@h/db") == "postgresql+psycopg://u:p@h/db"
+        assert normalize_database_url("sqlite:///x.db") == "sqlite:///x.db"
 
 # ------------------------------------------------------------- planning
 

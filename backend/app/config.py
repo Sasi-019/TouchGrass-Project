@@ -57,17 +57,25 @@ def _int(value: str | None, default: int) -> int:
     try:
         return int(value) if value not in (None, "") else default
     except ValueError:
-        return default
-
-
 def normalize_database_url(url: str) -> str:
-    """Hosting providers often hand out ``postgres://`` URLs.
+    """Make hosting-provider URLs work with the installed driver.
 
-    SQLAlchemy 1.4+ only understands ``postgresql://``.
+    * Providers such as Render/Heroku may hand out ``postgres://`` URLs, which
+      SQLAlchemy does not understand.
+    * A plain ``postgresql://`` URL lets SQLAlchemy choose the driver, and
+      SQLAlchemy 2.1+ chooses ``psycopg`` (v3). TouchGrass installs
+      ``psycopg2-binary``, so name that driver explicitly.
+
+    A URL that already names a driver (``postgresql+psycopg://``) is left alone.
     """
     url = (url or "").strip()
+
     if url.startswith("postgres://"):
-        return "postgresql://" + url[len("postgres://"):]
+        url = "postgresql://" + url[len("postgres://"):]
+
+    if url.startswith("postgresql://"):
+        url = "postgresql+psycopg2://" + url[len("postgresql://"):]
+
     return url
 
 
