@@ -1,6 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
-
-const OPT_IN_KEY = "touchgrass_location_optin";
+import { useCallback, useState } from "react";
 
 /**
  * Optional browser location.
@@ -34,14 +32,6 @@ export default function useBrowserLocation() {
           longitude: position.coords.longitude,
         });
         setStatus("granted");
-
-        try {
-          // Remember that the user chose to share, so next visit can reuse
-          // the permission they already granted (no new prompt).
-          localStorage.setItem(OPT_IN_KEY, "1");
-        } catch {
-          /* storage unavailable: fine */
-        }
       },
       (error) => {
         setCoords(null);
@@ -55,38 +45,7 @@ export default function useBrowserLocation() {
   const clear = useCallback(() => {
     setCoords(null);
     setStatus("idle");
-
-    try {
-      localStorage.removeItem(OPT_IN_KEY);
-    } catch {
-      /* ignore */
-    }
   }, []);
-
-  // Only if the user pressed "Use my location" before AND the browser still
-  // says permission is granted: quietly pick it up again. Never prompts.
-  useEffect(() => {
-    let optedIn = false;
-
-    try {
-      optedIn = localStorage.getItem(OPT_IN_KEY) === "1";
-    } catch {
-      optedIn = false;
-    }
-
-    if (!optedIn || !navigator.permissions?.query) {
-      return;
-    }
-
-    navigator.permissions
-      .query({ name: "geolocation" })
-      .then((result) => {
-        if (result.state === "granted") {
-          request();
-        }
-      })
-      .catch(() => {});
-  }, [request]);
 
   return { status, coords, request, clear };
 }

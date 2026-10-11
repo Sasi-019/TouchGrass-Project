@@ -38,8 +38,6 @@ Sign Up → Profile Discovery → AI-understood Profile → Home → Ask the age
 7. **validate** – checks time, weather, dislikes, repetition and screen use; on failure it loops back to *generate* (up to 3 attempts)
 8. **finalize → persist** – saves the activity and its context in PostgreSQL
 
-The chat remembers your conversation (`GET /agent/history`, `DELETE /agent/history` for a new chat), so the screen behaves like a normal AI chat and survives reloads.
-
 Feedback (`POST /activities/{id}/feedback`) updates the profile's learned notes,
 so later challenges reflect what you loved or avoided. Prompts live in
 `backend/app/prompts.py`, separate from user data.

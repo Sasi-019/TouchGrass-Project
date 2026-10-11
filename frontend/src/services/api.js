@@ -112,23 +112,6 @@ export const chatWithAgent = async (data) => {
   return response.data;
 };
 
-<<<<<<< HEAD
-// Previous messages (oldest first), so the chat survives reloads.
-export const getChatHistory = async (limit = 60) => {
-  const response = await api.get("/agent/history", {
-    params: { limit },
-  });
-  return response.data;
-};
-
-// Starts a fresh conversation. Activities and feedback are kept.
-export const clearChatHistory = async () => {
-  const response = await api.delete("/agent/history");
-  return response.data;
-};
-
-=======
->>>>>>> 086f3d78cf4b16b3a4c49d79dcb806f55d124191
 // -----------------------------
 // Voice
 // -----------------------------

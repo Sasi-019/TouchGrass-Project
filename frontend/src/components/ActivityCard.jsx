@@ -7,10 +7,7 @@ import {
 
 export default function ActivityCard({
   activity,
-<<<<<<< HEAD
   onClick,
-=======
->>>>>>> 086f3d78cf4b16b3a4c49d79dcb806f55d124191
 }) {
 
   if (!activity) {
@@ -18,7 +15,6 @@ export default function ActivityCard({
   }
 
   const place =
-<<<<<<< HEAD
     activity.place || activity.context?.place;
 
 
@@ -39,13 +35,6 @@ export default function ActivityCard({
           : ""
       }`}
     >
-=======
-    activity.place;
-
-
-  return (
-    <div className="rounded-3xl border border-amber-500/20 bg-gradient-to-br from-amber-500/10 to-white/[0.03] p-6 shadow-xl">
->>>>>>> 086f3d78cf4b16b3a4c49d79dcb806f55d124191
 
       <div className="mb-4 flex items-center gap-2 text-amber-400">
         <Sparkles size={18} />
@@ -88,7 +77,6 @@ export default function ActivityCard({
       </div>
 
 
-<<<<<<< HEAD
       {(activity.reason || activity.context?.reason) && (
         <div className="mt-5 border-t border-white/10 pt-4 text-sm text-gray-400">
           {activity.reason || activity.context.reason}
@@ -98,11 +86,6 @@ export default function ActivityCard({
       {activity.status && activity.status !== "suggested" && (
         <div className="mt-4 inline-block rounded-full bg-white/5 px-3 py-1 text-xs capitalize text-gray-400">
           {activity.status}
-=======
-      {activity.reason && (
-        <div className="mt-5 border-t border-white/10 pt-4 text-sm text-gray-400">
-          {activity.reason}
->>>>>>> 086f3d78cf4b16b3a4c49d79dcb806f55d124191
         </div>
       )}
 
