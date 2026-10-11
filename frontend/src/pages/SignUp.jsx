@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../services/api";
@@ -28,32 +29,33 @@ function SignUp() {
     setLoading(true);
 
     try {
-      await api.post("/auth/register", formData);
+      // Step 1: Create the account
+      await api.post("/auth/signup", formData);
 
-      // Sign the new user straight in so they land on profile discovery
-      // (Sign Up -> Profile Discovery) instead of a second login screen.
-      try {
-        const login = await api.post("/auth/login", {
-          email: formData.email,
-          password: formData.password,
-        });
+      // Step 2: Log in automatically
+      const loginResponse = await api.post("/auth/login", {
+        email: formData.email,
+        password: formData.password,
+      });
 
-        localStorage.setItem(
-          "touchgrass_token",
-          login.data.access_token
-        );
+      // Step 3: Save the authentication token
+      localStorage.setItem(
+        "touchgrass_token",
+        loginResponse.data.access_token
+      );
 
-        navigate("/profile-discovery");
-      } catch {
-        // Account exists; fall back to the normal sign-in page.
-        navigate("/signin");
-      }
+      // Step 4: Navigate to profile discovery
+      navigate("/profile-discovery");
     } catch (error) {
       const message =
         error.response?.data?.detail ||
         "Something went wrong. Please try again.";
 
-      setError(message);
+      setError(
+        typeof message === "string"
+          ? message
+          : JSON.stringify(message)
+      );
     } finally {
       setLoading(false);
     }
@@ -61,7 +63,6 @@ function SignUp() {
 
   return (
     <div className="min-h-screen bg-[#eef6ef] flex items-center justify-center px-4">
-
       <div className="w-full max-w-md">
 
         {/* Heading */}
@@ -79,23 +80,27 @@ function SignUp() {
           </p>
         </div>
 
-        {/* Card */}
+        {/* Signup Card */}
         <div className="bg-white rounded-3xl shadow-lg p-8">
-
           <form onSubmit={handleSubmit} className="space-y-5">
 
             {/* Name */}
             <div>
-              <label className="block text-sm font-medium text-[#30483b] mb-2">
+              <label
+                htmlFor="name"
+                className="block text-sm font-medium text-[#30483b] mb-2"
+              >
                 Name
               </label>
 
               <input
+                id="name"
                 type="text"
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
                 placeholder="Your name"
+                autoComplete="name"
                 required
                 className="w-full rounded-xl border border-[#d5e1d7] px-4 py-3 outline-none focus:border-[#5c8d68] focus:ring-2 focus:ring-[#dcecdf]"
               />
@@ -103,16 +108,21 @@ function SignUp() {
 
             {/* Email */}
             <div>
-              <label className="block text-sm font-medium text-[#30483b] mb-2">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-[#30483b] mb-2"
+              >
                 Email
               </label>
 
               <input
+                id="email"
                 type="email"
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="you@example.com"
+                autoComplete="email"
                 required
                 className="w-full rounded-xl border border-[#d5e1d7] px-4 py-3 outline-none focus:border-[#5c8d68] focus:ring-2 focus:ring-[#dcecdf]"
               />
@@ -120,29 +130,37 @@ function SignUp() {
 
             {/* Password */}
             <div>
-              <label className="block text-sm font-medium text-[#30483b] mb-2">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-[#30483b] mb-2"
+              >
                 Password
               </label>
 
               <input
+                id="password"
                 type="password"
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
                 placeholder="Create a password"
+                autoComplete="new-password"
                 required
                 className="w-full rounded-xl border border-[#d5e1d7] px-4 py-3 outline-none focus:border-[#5c8d68] focus:ring-2 focus:ring-[#dcecdf]"
               />
             </div>
 
-            {/* Error */}
+            {/* Error Message */}
             {error && (
-              <div className="rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+              <div
+                role="alert"
+                className="rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700"
+              >
                 {error}
               </div>
             )}
 
-            {/* Submit */}
+            {/* Submit Button */}
             <button
               type="submit"
               disabled={loading}
@@ -150,10 +168,9 @@ function SignUp() {
             >
               {loading ? "Creating account..." : "Create account"}
             </button>
-
           </form>
 
-          {/* Sign in */}
+          {/* Sign In Link */}
           <p className="mt-6 text-center text-sm text-[#64756b]">
             Already have an account?{" "}
             <Link
@@ -163,11 +180,8 @@ function SignUp() {
               Sign in
             </Link>
           </p>
-
         </div>
-
       </div>
-
     </div>
   );
 }
