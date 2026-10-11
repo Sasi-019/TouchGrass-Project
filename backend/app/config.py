@@ -57,6 +57,7 @@ def _int(value: str | None, default: int) -> int:
     try:
         return int(value) if value not in (None, "") else default
     except ValueError:
+        return default
 def normalize_database_url(url: str) -> str:
     """Make hosting-provider URLs work with the installed driver.
 
